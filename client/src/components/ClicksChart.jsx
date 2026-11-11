@@ -8,13 +8,17 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
+import { useTheme } from "../context/ThemeContext";
 
 function formatDateLabel(dateStr) {
   if (!dateStr) return "";
   try {
     const parts = dateStr.split("-");
     if (parts.length === 3) {
-      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const monthNames = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+      ];
       const month = monthNames[parseInt(parts[1], 10) - 1];
       const day = parseInt(parts[2], 10);
       return `${month} ${day}`;
@@ -40,6 +44,12 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export default function ClicksChart({ data = [], title = "Clicks Over Time", color = "#2563eb" }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
+  const gridColor = isDark ? "#334155" : "#e2e8f0";
+  const axisColor = isDark ? "#94a3b8" : "#64748b";
+
   const hasData = Array.isArray(data) && data.length > 0;
   const maxClicks = hasData ? Math.max(...data.map((d) => d.clicks || 0), 0) : 0;
   const yAxisMax = Math.max(maxClicks + 1, 5);
@@ -63,20 +73,20 @@ export default function ClicksChart({ data = [], title = "Clicks Over Time", col
                   <stop offset="95%" stopColor={color} stopOpacity={0.0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridColor} />
               <XAxis
                 dataKey="date"
                 tickFormatter={formatDateLabel}
-                tick={{ fill: "#64748b", fontSize: 12 }}
+                tick={{ fill: axisColor, fontSize: 12 }}
                 tickLine={false}
-                axisLine={{ stroke: "#cbd5e1" }}
+                axisLine={{ stroke: gridColor }}
               />
               <YAxis
                 allowDecimals={false}
                 domain={[0, yAxisMax]}
-                tick={{ fill: "#64748b", fontSize: 12 }}
+                tick={{ fill: axisColor, fontSize: 12 }}
                 tickLine={false}
-                axisLine={{ stroke: "#cbd5e1" }}
+                axisLine={{ stroke: gridColor }}
               />
               <Tooltip content={<CustomTooltip />} />
               <Area

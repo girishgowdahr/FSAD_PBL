@@ -5,11 +5,23 @@ import helmet from "helmet";
 import morgan from "morgan";
 
 import { connectDB } from "./config/db.js";
+import authRoutes from "./routes/authRoutes.js";
 import urlRoutes from "./routes/urlRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
 import { handleRedirect } from "./controllers/urlController.js";
 import { redirectLimiter } from "./middleware/rateLimiters.js";
 import { errorHandler } from "./middleware/errorHandler.js";
+
+// Validate JWT_SECRET on startup
+if (!process.env.JWT_SECRET) {
+  console.error("FATAL: JWT_SECRET environment variable is missing.");
+  process.exit(1);
+}
+
+if (process.env.NODE_ENV === "production" && process.env.JWT_SECRET.length < 32) {
+  console.error("FATAL: JWT_SECRET must be at least 32 characters long in production mode.");
+  process.exit(1);
+}
 
 const app = express();
 
@@ -36,9 +48,19 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok" });
 });
 
-// API routes
+// Mount API routes
+app.use("/api/auth", authRoutes);
 app.use("/api/urls", urlRoutes);
 app.use("/api/analytics", analyticsRoutes);
+
+// Unknown /api/* routes 404 handler
+app.all("/api/*", (req, res) => {
+  res.status(404).json({
+    error: {
+      message: "Resource not found",
+    },
+  });
+});
 
 // Redirect route for short codes
 app.get("/:shortCode", redirectLimiter, handleRedirect);

@@ -23,3 +23,15 @@ export const redirectLimiter = rateLimit({
     },
   },
 });
+
+export const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Limit each IP to 10 auth attempts per 15 minutes
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    error: {
+      message: "Too many requests, please try again later.",
+    },
+  },
+});
