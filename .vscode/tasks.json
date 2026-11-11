@@ -1,0 +1,26 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "dev",
+      "problemMatcher": [],
+      "label": "npm: dev (Full Stack)",
+      "detail": "Runs concurrently for server and client",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Start MongoDB Local",
+      "type": "shell",
+      "command": "& 'C:\\Program Files\\MongoDB\\Server\\9.0\\bin\\mongod.exe' --dbpath 'C:\\Users\\admin\\.gemini\\antigravity\\scratch\\mongodb_data' --port 27017 --bind_ip 127.0.0.1",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    }
+  ]
+}
